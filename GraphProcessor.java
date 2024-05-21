@@ -45,7 +45,7 @@ public class GraphProcessor {
         // 从文件加载图
         showDirectedGraph(filename);
 
-        System.out.println("开始操作");
+        System.out.println("start");
         // 显示菜单并处理用户输入以调用不同功能
         while (true) {
             System.out.println("\n菜单:");
