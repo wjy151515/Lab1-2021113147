@@ -20,7 +20,7 @@ import java.util.Scanner;
 // import guru.nidi.graphviz.engine.Format;
 // import guru.nidi.graphviz.engine.Graphviz;
 // import guru.nidi.graphviz.model.MutableGraph;
-// import guru.nidi.graphviz.parse.Parser;
+
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -45,7 +45,7 @@ public class GraphProcessor {
         // 从文件加载图
         showDirectedGraph(filename);
 
-        System.out.println("start");
+        // System.out.println("start");
         // 显示菜单并处理用户输入以调用不同功能
         while (true) {
             System.out.println("\n菜单:");
