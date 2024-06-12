@@ -164,7 +164,7 @@ public class gra {
                                     message = "No \"" + word1 + "\" in the graph!";
                                 } else if (bridgeWords.equals("f3")) {
                                     message = "No \"" + word2 + "\" in the graph!";
-                                } else if (bridgeWords.equals("None")) {
+                                } else if (bridgeWords.isEmpty()) {
                                     message = "No bridge words from \"" + word1 + "\" to \"" + word2 + "\"!";
                                 } else {
                                     String[] tokens = bridgeWords.split(",");
@@ -419,65 +419,42 @@ public class gra {
         boolean word1Exists = false;
         boolean word2Exists = false;
 
-        // 遍历 G 的键值对
-        for (Map.Entry<String, Map<String, Integer>> entry : G.entrySet()) {
-            String wordA = entry.getKey();
-            Map<String, Integer> innerMap = entry.getValue();
+        // 检查是否存在 word1 在键中
+        word1Exists = ingraph(G, word1);
+        // 检查是否存在 word2 在键中
+        word2Exists = ingraph(G, word2);
+        String result = "";
+        if (!word1Exists) {
 
-            // 检查是否存在 word1 在键中
-            if (wordA.equals(word1) || innerMap.containsKey(word1)) {
-                word1Exists = true;
+            if (word2Exists) {
+                result = "f2";// 1不在，2在
+            } else {
+                result = "f1";// 1不在，2不在
             }
-            // 检查是否存在 word2 在键中
-            if (wordA.equals(word2) || innerMap.containsKey(word2)) {
-                word2Exists = true;
-            }
-        }
-
-        if (!word1Exists || !word2Exists) {
-            String result = "";
-            // 如果二者都不存在
-            if (!word1Exists && !word2Exists) {
-                result = "f1";
-            }
-            // 如果分别只有1或者2不存在
-            else if (!word1Exists) {
-                result = "f2";
-            } else if (!word2Exists) {
-                result = "f3";
-            }
-            return result;
-        }
-
-        // 获取 word1 到 word2 的所有桥接词
-        List<String> bridgeWords = new ArrayList<>();
-        Map<String, Integer> innerMap = G.get(word1);
-
-        // 检查是否存在桥接词
-        for (String bridgeWord : innerMap.keySet()) {
-            // 检查当前桥接词是否同时与 word2 相连
-            Map<String, Integer> testMap1 = G.get(bridgeWord);
-            if (testMap1 != null && testMap1.containsKey(word2)) {
-                // 如果是，则将桥接词添加到列表中
-                bridgeWords.add(bridgeWord);
-            }
-        }
-
-        // 返回结果
-        if (bridgeWords.isEmpty()) {
-            return "None";
+        } else if (!word2Exists) {
+            result = "f3";// 1在，2不在
         } else {
-            StringBuilder sb = new StringBuilder();
-            for (String item : bridgeWords) {
-                // 添加元素到字符串，并用逗号分隔
-                sb.append(item).append(",");
+            // 获取 word1 到 word2 的所有桥接词
+            List<String> bridgeWords = new ArrayList<>();
+            Map<String, Integer> innerMap = G.get(word1);
+
+            // 检查是否存在桥接词
+            for (String bridgeWord : innerMap.keySet()) {
+                // 检查当前桥接词是否同时与 word2 相连
+                Map<String, Integer> testMap1 = G.get(bridgeWord);
+                if (testMap1 != null && testMap1.containsKey(word2)) {
+                    // 如果是，则将桥接词添加到列表中
+                    bridgeWords.add(bridgeWord);
+                }
             }
-            // 去掉末尾多余的逗号
-            if (sb.length() > 0) {
-                sb.setLength(sb.length() - 1);
-            }
-            return sb.toString();
+
+            result = String.join(",", bridgeWords);
         }
+        return result;
+    }
+
+    public static boolean ingraph(Map<String, Map<String, Integer>> G, String word) {
+        return G.containsKey(word) || G.values().stream().anyMatch(innerMap -> innerMap.containsKey(word));
     }
 
     /**
@@ -495,7 +472,7 @@ public class gra {
 
             // 检查当前单词和下一个单词之间是否存在桥接词
             String bridgeWords = queryBridgeWords(Graph, words[i], words[i + 1]);
-            if (bridgeWords != "None" && bridgeWords != "f1"
+            if ((!bridgeWords.isEmpty()) && bridgeWords != "f1"
                     && bridgeWords != "f2" && bridgeWords != "f3") {
                 String[] tokens = bridgeWords.split(",");
                 List<String> list = new ArrayList<>();
